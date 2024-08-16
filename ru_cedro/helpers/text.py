@@ -7,6 +7,7 @@ def preprocess_text(text):
     - Remoção de acentos
     - Remoção de espaços extras
     - Padronização da capitalização
+    - Substituir "c/" por "com"
     
     Args:
         text (str): Texto a ser preprocessado.
@@ -18,13 +19,19 @@ def preprocess_text(text):
     
     # Remove acentos
     text = unidecode(text)
+    
     # Remove espaços extras
     text = re.sub(r'\s+', ' ', text).strip()
+    
     # Padroniza a capitalização
     text = text.lower()
+    
+    # Substitui "c/" por "com"
+    text = text.replace("c/", "com")
+    
     return text
 
-def tokenize_text(text, sep='[+;]| ou | e | ao | com |\.|,|\(|\)|\/|:'):
+def tokenize_text(text, sep=r'[+;,.()/\\:]| ou | e | ao | com '):
     """
     Pre-tokeniza um texto. As etapas de pre-tokenização são:
     - Repartir o texto em subtextos quando um caractere do sep é encontrado.
@@ -44,7 +51,6 @@ def tokenize_text(text, sep='[+;]| ou | e | ao | com |\.|,|\(|\)|\/|:'):
 def refine_tokens(tokens, replace_words_with = {
     "sl: ": "",
     "sob: ": "",
-    "c/": "com",
 }):
     """
     Refina os tokens de um texto. As etapas de refinamento são:
@@ -63,23 +69,3 @@ def refine_tokens(tokens, replace_words_with = {
             tokens[i] = tokens[i].replace(word, replacement)
     
     return tokens
-    
-    
-def bag_distance(str1, str2): 
-    """
-    Calcula a distância entre duas strings. A distância é calculada como a diferença entre os bags of words das strings.
-    
-    Args:
-        str1 (str): Primeira string.
-        str2 (str): Segunda string.
-        
-    Returns:
-        int: Distância entre os bags of words das strings.
-    """
-    
-    str1 = set(str1.split())
-    str2 = set(str2.split())
-    
-    return len(str1.symmetric_difference(str2))
-
-    

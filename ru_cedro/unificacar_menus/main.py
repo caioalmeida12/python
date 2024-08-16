@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
@@ -20,11 +19,14 @@ menus["description"] = menus["description"].apply(text.preprocess_text)
 menus["tokens"] = menus["description"].apply(text.tokenize_text)
 
 def unify_menus(menus, eps=90):
-    from collections import defaultdict
-    menus_unificados = defaultdict(lambda: {"description": "", "meal_id": set(), "id": [], "tokens": ""})
+    menus_unificados = {}
+    processed_descriptions = set()
     
     for _, menu in menus.iterrows():
         description = menu["description"]
+        
+        if description in processed_descriptions:
+            continue
         
         for key in menus_unificados.keys():
             if fuzz.ratio(key, description) > eps:
@@ -38,8 +40,9 @@ def unify_menus(menus, eps=90):
                 "id": [menu["id"]],
                 "tokens": menu["tokens"]
             }
+            processed_descriptions.add(description)
     
-    return dict(menus_unificados)
+    return menus_unificados
 
 # Unifica os menus
 menus_unificados = unify_menus(menus)
@@ -56,10 +59,8 @@ with open('output.json', 'w', encoding='utf-8') as file:
     file.close()
     
 # Criar um set com todos os tokens, ordenar alfabeticamente e salvar o resultado em um arquivo
-all_tokens = set()
-for tokens in menus["tokens"]:
-    all_tokens.update(tokens)
+all_tokens = {token for tokens in menus["tokens"] for token in tokens}
 
 with open('tokens.txt', 'w', encoding='utf-8') as file:
-    file.write("\n".join(all_tokens))
+    file.write("\n".join(sorted(all_tokens)))
     file.close()
