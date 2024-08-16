@@ -1,6 +1,6 @@
 import mysql.connector
 
-def get_connection(host="localhost", user="root", password="", database="back-rucedro"):
+def get_mysql_connection(host="localhost", user="root", password="", database="back-rucedro"):
     """
     Retorna uma conexão com o banco de dados MySQL.
 
@@ -17,7 +17,7 @@ def get_connection(host="localhost", user="root", password="", database="back-ru
     :raises Exception: Se a conexão falhar.
 
     :example:
-    conn = get_connection(host="localhost", user="root", password="", database="back-rucedro")
+    conn = get_mysql_connection(host="localhost", user="root", password="", database="back-rucedro")
     """
     conn = mysql.connector.connect(
         host=host,
