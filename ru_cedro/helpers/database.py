@@ -3,7 +3,21 @@ import mysql.connector
 def get_connection(host="localhost", user="root", password="", database="back-rucedro"):
     """
     Retorna uma conexão com o banco de dados MySQL.
-    Lança uma exceção se a conexão falhar.
+
+    :param host: O endereço do servidor MySQL. Padrão é "localhost".
+    :type host: str
+    :param user: O nome de usuário para autenticação. Padrão é "root".
+    :type user: str
+    :param password: A senha para autenticação. Padrão é uma string vazia.
+    :type password: str
+    :param database: O nome do banco de dados. Padrão é "back-rucedro".
+    :type database: str
+    :returns: Um objeto de conexão MySQL.
+    :rtype: mysql.connector.connection.MySQLConnection
+    :raises Exception: Se a conexão falhar.
+
+    :example:
+    conn = get_connection(host="localhost", user="root", password="", database="back-rucedro")
     """
     conn = mysql.connector.connect(
         host=host,
@@ -24,23 +38,16 @@ def get_connection(host="localhost", user="root", password="", database="back-ru
 def read_mysql_dataset(conn, table_names):
     """
     Lê os datasets MySQL e retorna todas as colunas de cada tabela especificada.
-    Retorna um dicionário onde a chave é o nome da tabela e o valor é um mapa do tipo [k: string] -> [].
-    
-    Ex: read_mysql_dataset(conn, ["menu", "scheduling"])
 
-    Retorna:
-    {
-        "menu": {
-            "id": [1, 2, 3, 4],
-            "name": ["Bife", "Frango", "Peixe", "Vegetariano"],
-            "price": [10.0, 8.0, 7.0, 6.0]
-        },
-        "scheduling": {
-            "id": [1, 2, 3, 4],
-            "date": ["2021-10-01", "2021-10-02", "2021-10-03", "2021-10-04"],
-            "menu_id": [1, 2, 3, 4]
-        }
-    }
+    :param conn: A conexão com o banco de dados MySQL.
+    :type conn: mysql.connector.connection.MySQLConnection
+    :param table_names: Uma lista de nomes de tabelas para ler os dados.
+    :type table_names: list
+    :returns: Um dicionário onde a chave é o nome da tabela e o valor é um dicionário com as colunas e seus respectivos dados.
+    :rtype: dict
+
+    :example:
+    datasets = read_mysql_dataset(conn, ["menu", "scheduling"])
     """
     cursor = conn.cursor()
     datasets = {}
