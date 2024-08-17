@@ -16,9 +16,21 @@ menus = pd.DataFrame(datasets["menu"])
 
 # Preprocessa os textos
 menus["description"] = menus["description"].apply(text.preprocess_text_for_menu_unification)
-menus["tokens"] = menus["description"].apply(text.tokenize_text_for_menu_unification)
+
+# Atribui os tokens para cada menu
+menus["tokens"] = menus["description"].apply(text.tokenize_and_refine_text_for_menu_unification)
 
 def unify_menus(menus, eps=90):
+    """
+    Unifica os menus. Dois menus são considerados iguais se a similaridade entre suas descrições for maior que eps.
+    
+    Args:
+        menus (DataFrame): DataFrame contendo os menus.
+        eps (int): Limiar de similaridade entre as descrições dos menus.
+        
+    Returns:
+        dict: Dicionário contendo os menus unificados.
+    """
     menus_unificados = {}
     processed_descriptions = set()
     
@@ -44,18 +56,9 @@ def unify_menus(menus, eps=90):
     
     return menus_unificados
 
-# Unifica os menus
-menus_unificados = unify_menus(menus)
-
-# Função para converter np.int64 para int
-def convert_np_int64_to_int(np_int_list):
-    return [int(x) for x in np_int_list]
-
-menus["tokens"] = menus["tokens"].apply(text.refine_tokens_for_menu_unification)
-
 # Salvar os menus unificados no arquivo output.json
 with open('output.json', 'w', encoding='utf-8') as file:
-    json.dump(menus_unificados, file, ensure_ascii=False, default=convert_np_int64_to_int)
+    json.dump(unify_menus(menus), file, ensure_ascii=False, default=lambda x: list(x) if isinstance(x, set) else x)
     file.close()
     
 # Criar um set com todos os tokens, ordenar alfabeticamente e salvar o resultado em um arquivo

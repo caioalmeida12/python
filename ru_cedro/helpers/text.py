@@ -31,41 +31,32 @@ def preprocess_text_for_menu_unification(text):
     
     return text
 
-def tokenize_text_for_menu_unification(text, sep=r'[+;,.()/\\:]| ou | e | ao | com '):
-    """
-    Pre-tokeniza um texto. As etapas de pre-tokenização são:
-    - Repartir o texto em subtextos quando um caractere do sep é encontrado.
-    - Remover espaços extras (trim).
-    
-    Args:
-        text (str): Texto a ser pre-tokenizado.
-        
-    Returns:
-        list: Lista de subtextos.
-    """
-    
-    text = re.split(sep, text)
-    text = [t.strip() for t in text if t.strip()]
-    return text
-        
-def refine_tokens_for_menu_unification(tokens, replace_words_with = {
+def tokenize_and_refine_text_for_menu_unification(text, sep=r'[+;,.()/\\:]| ou | e | ao | com ', replace_words_with = {
     "sl: ": "",
     "sob: ": "",
 }):
     """
-    Refina os tokens de um texto. As etapas de refinamento são:
+    Pre-tokeniza e refina um texto. As etapas são:
+    - Repartir o texto em subtextos quando um caractere do sep é encontrado.
+    - Remover espaços extras (trim).
     - Substituição de palavras por outras palavras.
     
     Args:
-        tokens (list): Lista de tokens a serem refinados.
-        replace_words_with (dict): Dicionário de substituições a serem feitas.
+        text (str): Texto a ser pre-tokenizado e refinado.
+        replace_words_with (dict, optional): Dicionário de substituições a serem feitas.
         
     Returns:
-        list: Lista de tokens refinados.
+        list: Lista de subtextos refinados.
     """
     
-    for i, token in enumerate(tokens):
-        for word, replacement in replace_words_with.items():
-            tokens[i] = tokens[i].replace(word, replacement)
+    # Tokenização
+    tokens = re.split(sep, text)
+    tokens = [t.strip() for t in tokens if t.strip()]
+    
+    # Refinamento
+    if replace_words_with:
+        for i, token in enumerate(tokens):
+            for word, replacement in replace_words_with.items():
+                tokens[i] = tokens[i].replace(word, replacement)
     
     return tokens
