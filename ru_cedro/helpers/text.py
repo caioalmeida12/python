@@ -1,7 +1,7 @@
 import re
 from unidecode import unidecode
 
-def preprocess_text(text):
+def preprocess_text_for_menu_unification(text):
     """
     Preprocessa um texto. As etapas de preprocessamento são:
     - Remoção de acentos
@@ -31,7 +31,7 @@ def preprocess_text(text):
     
     return text
 
-def tokenize_text(text, sep=r'[+;,.()/\\:]| ou | e | ao | com '):
+def tokenize_text_for_menu_unification(text, sep=r'[+;,.()/\\:]| ou | e | ao | com '):
     """
     Pre-tokeniza um texto. As etapas de pre-tokenização são:
     - Repartir o texto em subtextos quando um caractere do sep é encontrado.
@@ -48,7 +48,7 @@ def tokenize_text(text, sep=r'[+;,.()/\\:]| ou | e | ao | com '):
     text = [t.strip() for t in text if t.strip()]
     return text
         
-def refine_tokens(tokens, replace_words_with = {
+def refine_tokens_for_menu_unification(tokens, replace_words_with = {
     "sl: ": "",
     "sob: ": "",
 }):

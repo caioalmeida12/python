@@ -15,8 +15,8 @@ datasets = db.read_mysql_dataset(conn, ["menu"])
 menus = pd.DataFrame(datasets["menu"])
 
 # Preprocessa os textos
-menus["description"] = menus["description"].apply(text.preprocess_text)
-menus["tokens"] = menus["description"].apply(text.tokenize_text)
+menus["description"] = menus["description"].apply(text.preprocess_text_for_menu_unification)
+menus["tokens"] = menus["description"].apply(text.tokenize_text_for_menu_unification)
 
 def unify_menus(menus, eps=90):
     menus_unificados = {}
@@ -51,7 +51,7 @@ menus_unificados = unify_menus(menus)
 def convert_np_int64_to_int(np_int_list):
     return [int(x) for x in np_int_list]
 
-menus["tokens"] = menus["tokens"].apply(text.refine_tokens)
+menus["tokens"] = menus["tokens"].apply(text.refine_tokens_for_menu_unification)
 
 # Salvar os menus unificados no arquivo output.json
 with open('output.json', 'w', encoding='utf-8') as file:
