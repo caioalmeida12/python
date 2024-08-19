@@ -17,8 +17,14 @@ def preprocess_text_for_menu_unification(text):
     :rtype: str
     """
 
-    replacement = {"c/": "com"}
-    exclusion = {"sl ", "sob ", "sl:", "sob:"}
+    replacement = {
+        "c/": "com",
+        "sl:": "salada",
+        "sl ": "salada",
+        "sob:": "sobremesa ",
+        "sob ": "sobremesa ",
+        }
+    exclusion = {}
 
     text = unidecode(text)
     text = text.lower()
@@ -126,3 +132,20 @@ def merge_similar_tokens(tokens_set, threshold=90):
     tokens_set = recursive_merge(tokens_set)
 
     return set(tokens_set["token"])
+
+def add_token_ids(menus, tokens):
+    """
+    Adiciona os ids dos tokens de um menu ao DataFrame de menus.
+    
+    :param menus: DataFrame de menus
+    :type menus: pd.DataFrame
+    :param tokens: dicionário com os tokens
+    :type tokens: dict
+    :return: DataFrame de menus com os ids dos tokens
+    :rtype: pd.DataFrame
+    """
+    
+    # For every menu, run through its tokenized description and do: if token is in tokens["all_enumerated"], add the token_id to the ["token_ids"] list
+    menus["token_ids"] = menus["tokenized_description"].apply(lambda x: [tokens["all_enumerated"].loc[tokens["all_enumerated"]["token"] == token].index[0] for token in x if token in tokens["all"]["token"].values])
+    
+    return menus
