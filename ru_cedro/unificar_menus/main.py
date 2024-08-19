@@ -15,8 +15,12 @@ menus = database.get_column_data(cursor, "menu").head(6)
 menus["preprocessed_description"] = menus["description"].apply(unificar_menus.preprocess_text_for_menu_unification)
 menus["tokenized_description"] = menus["preprocessed_description"].apply(unificar_menus.tokenize_menu_description)
 tokens = {
-    "all": unificar_menus.tokenized_descriptions_to_tokens_set(menus["tokenized_description"]), 
+    "all": unificar_menus.tokenized_descriptions_to_tokens_set(menus["tokenized_description"])
 }
+
+print(tokens["all"])
+
+
 tokens["all_enumerated"] = tokens["all"].reset_index().rename(columns={"index": "token_id"})
 
 menus = unificar_menus.add_token_ids(menus, tokens)

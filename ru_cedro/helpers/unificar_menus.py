@@ -64,7 +64,7 @@ def tokenized_descriptions_to_tokens_set(tokenized_descriptions):
     
     tokens_list = list(unique_tokens_set)
     
-    tokens_df = pd.DataFrame(tokens_list, columns=["token"])
+    tokens_df = pd.DataFrame(tokens_list, columns=["token"]).sort_values("token").reset_index(drop=True)
     
     return tokens_df
 
