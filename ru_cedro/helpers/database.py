@@ -30,7 +30,9 @@ def get_mysql_connection():
     
     return conn
 
-def get_column_data(cursor, table_name, *columns):
+import pandas as pd
+
+def get_column_data(cursor, table_name, *columns, where=None, **kwargs):
     """
     Retorna as colunas de uma tabela.
 
@@ -40,6 +42,8 @@ def get_column_data(cursor, table_name, *columns):
     :type table_name: str
     :param columns: As colunas a serem retornadas. Se vazio, retorna todas.
     :type columns: str
+    :param where: Condição para filtrar os dados.
+    :type where: str, optional
     :returns: Os dados contidos nas colunas.
     :rtype: pandas.core.frame.DataFrame
     """
@@ -49,12 +53,13 @@ def get_column_data(cursor, table_name, *columns):
     else:
         columns = ", ".join(columns)
 
-    cursor.execute(f"SELECT {columns} FROM {table_name}")
+    query = f"SELECT {columns} FROM {table_name}"
+    if where:
+        query += f" WHERE {where}"
+
+    cursor.execute(query)
     result = cursor.fetchall()
     columns = cursor.column_names
     df = pd.DataFrame(result, columns=columns)
 
     return df
-    
-
-    

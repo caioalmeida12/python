@@ -2,6 +2,7 @@ import re
 import pandas as pd
 from unidecode import unidecode
 from fuzzywuzzy import fuzz
+from helpers import database
 
 def preprocess_text_for_menu_unification(text):
     """
@@ -145,7 +146,26 @@ def add_token_ids(menus, tokens):
     :rtype: pd.DataFrame
     """
     
-    # For every menu, run through its tokenized description and do: if token is in tokens["all_enumerated"], add the token_id to the ["token_ids"] list
-    menus["token_ids"] = menus["tokenized_description"].apply(lambda x: [tokens["all_enumerated"].loc[tokens["all_enumerated"]["token"] == token].index[0] for token in x if token in tokens["all"]["token"].values])
+    token_to_id = {token: idx for idx, token in enumerate(tokens["token"])}
+    
+    menus["token_ids"] = menus["tokenized_description"].apply(lambda x: [token_to_id[token] + 1 for token in x if token in token_to_id])
     
     return menus
+
+def get_schedulings_by_token_id(cursor, token_id):
+    """
+    Procura todos os agendamentos que contêm um token_id específico. Checa o campo menu_id da tabela scheduling.
+
+    :param cursor: O cursor da conexão.
+    :type cursor: mysql.connector.cursor.MySQLCursor
+    :param token_id: O ID do token.
+    :type token_id: int
+    :returns: DataFrame de agendamentos filtrados pelo token_id.
+    :rtype: pd.DataFrame
+    """
+    
+    where = f"menu_id = {token_id}"
+
+    filtered_schedulings = database.get_column_data(cursor, "scheduling", where=where)
+
+    return filtered_schedulings
